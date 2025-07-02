@@ -1,0 +1,957 @@
+{
+  "echoes": [
+    {
+      "id": "49c070aa",
+      "sigil": "\ud835\udef4:41fd",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_0_0"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        0,
+        0
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "9dc47523",
+      "sigil": "\ud835\udef4:69bc",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_0_1"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        0,
+        1
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "c9200016",
+      "sigil": "\ud835\udef4:1200",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_0_2"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        0,
+        2
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "1924bf4a",
+      "sigil": "\ud835\udef4:aece",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_0_3"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        0,
+        3
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "6c9ae25f",
+      "sigil": "\ud835\udef4:584a",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_0_4"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        0,
+        4
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "9e5a1247",
+      "sigil": "\ud835\udef4:0756",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_1_0"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        1,
+        0
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "ddb9ad70",
+      "sigil": "\ud835\udef4:7b9c",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_1_1"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        1,
+        1
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "0d1b6301",
+      "sigil": "\ud835\udef4:b114",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_1_2"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        1,
+        2
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "946df3c0",
+      "sigil": "\ud835\udef4:7405",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_1_3"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        1,
+        3
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "68cabb55",
+      "sigil": "\ud835\udef4:582a",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_1_4"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        1,
+        4
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "ee982c39",
+      "sigil": "\ud835\udef4:61f4",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_2_0"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        2,
+        0
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "e0bc4b8d",
+      "sigil": "\ud835\udef4:6389",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_2_1"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        2,
+        1
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "ae536380",
+      "sigil": "\ud835\udef4:9047",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_2_2"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        2,
+        2
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "4bce0888",
+      "sigil": "\ud835\udef4:64ba",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_2_3"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        2,
+        3
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "8ffc21fe",
+      "sigil": "\ud835\udef4:541d",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_2_4"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        2,
+        4
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "fa2ffe3e",
+      "sigil": "\ud835\udef4:9119",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_3_0"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        3,
+        0
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "345ad6fd",
+      "sigil": "\ud835\udef4:dacd",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_3_1"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        3,
+        1
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "4a82cba2",
+      "sigil": "\ud835\udef4:399f",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_3_2"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        3,
+        2
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "04a34650",
+      "sigil": "\ud835\udef4:42a5",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_3_3"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        3,
+        3
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "19612dae",
+      "sigil": "\ud835\udef4:2bf9",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_3_4"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        3,
+        4
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "64cfa1af",
+      "sigil": "\ud835\udef4:621b",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_4_0"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 1,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        4,
+        0
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "4bd46589",
+      "sigil": "\ud835\udef4:bd06",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_4_1"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        4,
+        1
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "7cf6c1ea",
+      "sigil": "\ud835\udef4:c487",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_4_2"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        4,
+        2
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "5b66c1cf",
+      "sigil": "\ud835\udef4:8bb6",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_4_3"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 1,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        4,
+        3
+      ],
+      "is_data_qubit": false,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    },
+    {
+      "id": "9d81cb91",
+      "sigil": "\ud835\udef4:0c57",
+      "origin": "self",
+      "trail": "deque([], maxlen=13)",
+      "possible_states": [
+        "qubit_4_4"
+      ],
+      "quantum_state": [
+        "(1+0j)"
+      ],
+      "entangled_pair_id": null,
+      "decoherence_timer": 1.0,
+      "last_observed_cycle": 0,
+      "emotion": "neutral",
+      "emotion_gradient": {},
+      "saliency": 1.0,
+      "causal_links": {
+        "forward": [],
+        "backward": []
+      },
+      "is_flashbulb": false,
+      "is_summary": false,
+      "reminder_info": null,
+      "last_accessed": 1,
+      "grid_position": [
+        4,
+        4
+      ],
+      "is_data_qubit": true,
+      "logical_bit_value": null,
+      "error_state": {
+        "X": 0,
+        "Z": 0
+      },
+      "event_boundary": false,
+      "storyline_id": null
+    }
+  ],
+  "entanglement_matrix": {},
+  "recursion_cycles": 1,
+  "reminders": []
+}
