@@ -124,7 +124,7 @@ python ghostmemory.py
 
 ## Contributors
 
-Developed by TaoishTechy and community contributors. PRs, forks, and feature enhancements are welcome.
+Developed by TaoishTechy and several beasts in unison. PRs, forks, and feature enhancements are welcome.
 
 ---
 
