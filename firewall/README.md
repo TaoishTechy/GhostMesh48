@@ -2,7 +2,7 @@
 # 🧱 Enhanced AGI Firewall
 
 **Version**: 1.0  
-**Author**: Michael Landry
+**Author**: Mikey/No Company
 **Purpose**: Hard-line firewall and containment monitor for detecting and mitigating catastrophic AGI failure modes in real-time.
 
 ---
@@ -98,6 +98,214 @@ The system initiates an emergency shutdown when:
 
 ## 📜 License
 
-None
+MIT (or specify your custom license)
 
 ---
+
+
+---
+
+## 🧰 Usage Instructions for Enhanced AGI Firewall
+
+### 🖥️ Prerequisites
+
+- **Operating System**: Linux (e.g., Lubuntu) with root privileges
+- **Python**: Version 3.8 or higher
+- **Dependencies**:
+  ```bash
+  sudo apt install python3 python3-pip iptables
+  pip3 install psutil numpy
+  ```
+- **Hardware**: Dual-core system, ≥2GB RAM, 120GB SSD
+- **Network**: SFTP access for secure data extraction (no USB)
+
+---
+
+### ⚙️ Installation Steps
+
+#### 1. Prepare the Environment
+
+```bash
+sudo apt update && sudo apt upgrade
+sudo apt install python3 python3-pip iptables
+pip3 install psutil numpy
+```
+
+Verify:
+```bash
+python3 --version
+python3 -c "import psutil, numpy; print('Modules loaded successfully')"
+```
+
+#### 2. Download the Script
+
+Use SFTP:
+```bash
+sftp secure_user@isolated_system_ip
+put agi-firewall-enhanced.py /opt/agi-firewall/
+```
+
+#### 3. Set Permissions
+
+```bash
+sudo chmod +x /opt/agi-firewall/agi-firewall-enhanced.py
+sudo chown root:root /opt/agi-firewall/agi-firewall-enhanced.py
+```
+
+---
+
+### 🛠️ Configuration
+
+Edit the script:
+```bash
+sudo nano /opt/agi-firewall/agi-firewall-enhanced.py
+```
+
+Update:
+
+- `FRAMEWORK_DIR`
+- `ALLOWED_PORTS`
+- `ALLOWED_OUTGOING`
+- `LOG_FILES`
+
+Verify:
+```bash
+ls -l /opt/agi-framework/
+ls -l /opt/agi-framework/logs/agi.log
+```
+
+Optional: Dry run
+```bash
+python3 /opt/agi-firewall/agi-firewall-enhanced.py --dry-run
+```
+
+---
+
+### 🚨 Running the Firewall
+
+```bash
+sudo python3 /opt/agi-firewall/agi-firewall-enhanced.py
+```
+
+Initial Output:
+```
+Enhanced AGI Firewall with Comprehensive Safety Safeguards
+===========================================================
+Implementing 10 critical AGI development safeguards...
+===========================================================
+```
+
+---
+
+### 🩺 Monitoring
+
+```bash
+cat enhanced-agi-firewall.log
+cat agi-security-events.log
+```
+
+Logs rotate every minute with security reports.
+
+---
+
+### 🛑 Stopping the Firewall
+
+```bash
+sudo pkill -TERM -f agi-firewall-enhanced.py
+```
+
+This will generate:
+- `agi_forensic_state.json` for postmortem analysis
+
+---
+
+## 🧹 Maintenance and Troubleshooting
+
+- **Log Rotation**:
+  ```bash
+  sudo nano /etc/logrotate.d/agi-firewall
+  ```
+
+  Add:
+  ```
+  /path/to/enhanced-agi-firewall.log {
+      daily
+      rotate 7
+      compress
+      missingok
+  }
+  ```
+
+- **Baseline Updates**: After 48h stable run, tune `ANOMALY_THRESHOLD`.
+
+- **Firewall Errors**:
+  ```bash
+  sudo iptables -L
+  ```
+
+- **Anomaly Overload**:
+  Inspect:
+  ```bash
+  cat agi-security-events.log
+  ```
+
+- **Zombie Processes**:
+  ```bash
+  ps aux | grep Z
+  ```
+
+---
+
+## 📤 Secure Log Extraction (No USB)
+
+```bash
+sftp secure_user@isolated_system_ip
+get enhanced-agi-firewall.log
+get agi-security-events.log
+get agi_forensic_state.json
+sha256sum enhanced-agi-firewall.log
+```
+
+---
+
+## 🧪 Advanced Usage
+
+- **Custom Safeguards**: Extend any monitoring class (e.g., with `consciousness_field` metrics)
+- **Automation**:
+
+  Create a systemd service:
+  ```bash
+  sudo nano /etc/systemd/system/agi-firewall.service
+  ```
+
+  Contents:
+  ```
+  [Unit]
+  Description=Enhanced AGI Firewall
+  After=network.target
+
+  [Service]
+  Type=simple
+  ExecStart=/usr/bin/python3 /opt/agi-firewall/agi-firewall-enhanced.py
+  Restart=on-failure
+  User=root
+
+  [Install]
+  WantedBy=multi-user.target
+  ```
+
+  Enable and run:
+  ```bash
+  sudo systemctl enable agi-firewall.service
+  sudo systemctl start agi-firewall.service
+  ```
+
+---
+
+## 🧭 Final Notes
+
+This firewall is your safety net against AGI-related risks.
+
+> If you mess this up, things *could go very bad*. Start slow, isolate, baseline. Monitor logs and evolve protocols deliberately.
+
+Stay safe. Humanity is counting on this.
