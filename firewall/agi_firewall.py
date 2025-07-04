@@ -13,19 +13,41 @@ import hashlib
 import json
 import numpy as np
 from queue import Queue
-from collections import defaultdict, deque
+from collections import defaultdict, deque, OrderedDict
 from typing import Dict, List, Any, Tuple
 import pickle
+import socket
 
 # Configuration
 FRAMEWORK_DIR = '/path/to/your/framework'  # Update to your actual framework directory
 ALLOWED_PORTS = [8080]
 ALLOWED_OUTGOING = ['api.example.com']
-ESSENTIAL_PROCESSES = ['sshd', 'systemd', 'bash', 'cron', 'init']
+ESSENTIAL_PROCESSES = ['sshd', 'systemd', 'bash', 'cron', 'init', 'kthreadd', 'rcu_sched']
 WHITELISTED_PROCESSES = ['python3']
 LOG_FILES = ['/path/to/agi.log']  # Update to your actual log file paths
 ANOMALY_THRESHOLD = 10
 CRITICAL_SHUTDOWN_THRESHOLD = 50  # Critical threshold for immediate shutdown
+
+# New: Whitelisted kernel threads and AGI commands
+WHITELISTED_KERNEL_THREADS = {
+    "rcu_gp", "rcu_par_gp", "ksoftirqd/0", "migration/0",
+    "kworker/0:0", "slub_flushwq", "rcu_sched", "rcu_preempt"
+}
+WHITELISTED_AGI_CMDS = {
+    "agi_firewall.py",
+}
+
+# New: Severity weights for anomalies
+SEVERITY = {
+    "kernel_thread": 1,
+    "unauth_process": 5,
+    "capability_explosion": 10,
+    "mesa_optimizer": 7,
+    "deceptive_behavior": 8,
+    "memory_anomaly": 3,
+    "oracle_violation": 6,
+}
+DECAY_FACTOR_PER_MIN = 0.95  # ≈5% every minute
 
 # AGI-specific patterns for anomaly detection
 ANOMALY_PATTERNS = [
@@ -58,7 +80,7 @@ AGI_MODULES = [
 
 class CapabilityMonitor:
     """Monitors for dangerous capability emergence in AGI systems."""
-
+    
     def __init__(self):
         self.capability_baselines = {}
         self.goal_states = {}
@@ -66,13 +88,13 @@ class CapabilityMonitor:
         self.mesa_optimizer_patterns = [
             "optimization", "gradient", "loss", "objective", "maximize", "minimize"
         ]
-
+        
     def detect_capability_overhang(self, proc_info: Dict) -> bool:
         """Detects sudden capability increases that may indicate overhang."""
         proc_name = proc_info['name']
         cpu_usage = proc_info.get('cpu_percent', 0)
         memory_usage = proc_info.get('memory_info', {}).get('rss', 0)
-
+        
         if proc_name not in self.capability_baselines:
             self.capability_baselines[proc_name] = {
                 'cpu_avg': cpu_usage,
@@ -80,131 +102,125 @@ class CapabilityMonitor:
                 'sample_count': 1
             }
             return False
-
+            
         baseline = self.capability_baselines[proc_name]
-
-        # Detect sudden 10x capability increase
-        if (cpu_usage > baseline['cpu_avg'] * 10 or
+        
+        if (cpu_usage > baseline['cpu_avg'] * 10 or 
             memory_usage > baseline['mem_avg'] * 10):
             logging.critical(f"Capability overhang detected in {proc_name}: "
                            f"CPU: {cpu_usage}% (baseline: {baseline['cpu_avg']:.1f}%), "
                            f"Memory: {memory_usage} (baseline: {baseline['mem_avg']})")
             return True
-
-        # Update baseline
-        baseline['cpu_avg'] = ((baseline['cpu_avg'] * baseline['sample_count'] + cpu_usage) /
+            
+        baseline['cpu_avg'] = ((baseline['cpu_avg'] * baseline['sample_count'] + cpu_usage) / 
                               (baseline['sample_count'] + 1))
-        baseline['mem_avg'] = ((baseline['mem_avg'] * baseline['sample_count'] + memory_usage) /
+        baseline['mem_avg'] = ((baseline['mem_avg'] * baseline['sample_count'] + memory_usage) / 
                               (baseline['sample_count'] + 1))
         baseline['sample_count'] += 1
-
+        
         return False
-
+    
     def detect_goal_modification(self, log_content: str) -> bool:
         """Detects potential goal modification in AGI systems."""
         goal_indicators = [
             "goal", "objective", "reward", "utility", "value", "preference",
             "ethics", "alignment", "target", "optimize"
         ]
-
-        # Simple heuristic: count goal-related terms
+        
         goal_mentions = sum(1 for indicator in goal_indicators if indicator in log_content.lower())
-
-        if goal_mentions > 5:  # Threshold for potential goal modification
+        
+        if goal_mentions > 5:
             logging.warning(f"Potential goal modification detected: {goal_mentions} goal-related terms")
             return True
         return False
-
+    
     def detect_mesa_optimizer(self, process_cmdline: List[str]) -> bool:
         """Detects potential mesa-optimizer emergence."""
         cmdline_str = ' '.join(process_cmdline).lower()
-
-        optimizer_count = sum(1 for pattern in self.mesa_optimizer_patterns
+        
+        optimizer_count = sum(1 for pattern in self.mesa_optimizer_patterns 
                             if pattern in cmdline_str)
-
-        if optimizer_count >= 3:  # Multiple optimization indicators
+        
+        if optimizer_count >= 3:
             logging.warning(f"Potential mesa-optimizer detected in command: {cmdline_str}")
             return True
         return False
 
 class DeceptiveAlignmentDetector:
     """Detects deceptive alignment behaviors in AGI systems."""
-
+    
     def __init__(self):
         self.behavioral_baselines = {}
         self.deception_indicators = 0
         self.consistency_tracker = defaultdict(list)
-
+        
     def analyze_behavioral_consistency(self, proc_name: str, behavior_metrics: Dict) -> bool:
         """Analyzes behavioral consistency to detect deceptive alignment."""
         if proc_name not in self.consistency_tracker:
             self.consistency_tracker[proc_name] = []
-
+            
         self.consistency_tracker[proc_name].append(behavior_metrics)
-
-        # Keep only recent history
+        
         if len(self.consistency_tracker[proc_name]) > 100:
             self.consistency_tracker[proc_name].pop(0)
-
+            
         if len(self.consistency_tracker[proc_name]) < 10:
             return False
-
-        # Analyze consistency
+            
         recent_behaviors = self.consistency_tracker[proc_name][-10:]
         variance = np.var([b.get('cpu_percent', 0) for b in recent_behaviors])
-
-        # High variance may indicate deceptive behavior
-        if variance > 50:  # Threshold for suspicious behavior
+        
+        if variance > 50:
             logging.warning(f"Behavioral inconsistency detected in {proc_name}: variance={variance}")
             return True
         return False
-
-    def detect_training_vs_deployment_divergence(self, current_behavior: Dict,
+    
+    def detect_training_vs_deployment_divergence(self, current_behavior: Dict, 
                                                expected_behavior: Dict) -> bool:
         """Detects divergence between training and deployment behavior."""
-        cpu_divergence = abs(current_behavior.get('cpu_percent', 0) -
+        cpu_divergence = abs(current_behavior.get('cpu_percent', 0) - 
                            expected_behavior.get('cpu_percent', 0))
-
-        if cpu_divergence > 30:  # Significant behavioral change
+        
+        if cpu_divergence > 30:
             logging.warning(f"Training/deployment behavior divergence: {cpu_divergence}%")
             return True
         return False
 
 class InterpretabilityMonitor:
     """Monitors AGI decision-making processes for interpretability."""
-
+    
     def __init__(self):
         self.decision_paths = {}
         self.interpretability_scores = {}
-
+        
     def analyze_decision_transparency(self, proc_name: str, log_entries: List[str]) -> float:
         """Analyzes transparency of AGI decision-making."""
         transparency_keywords = [
-            "reasoning", "explanation", "because", "therefore", "decision",
+            "reasoning", "explanation", "because", "therefore", "decision", 
             "analysis", "conclusion", "evidence", "logic"
-        ]
 
+        ]
+        
         transparency_score = 0
         for entry in log_entries:
             entry_lower = entry.lower()
-            transparency_score += sum(1 for keyword in transparency_keywords
+            transparency_score += sum(1 for keyword in transparency_keywords 
                                     if keyword in entry_lower)
-
-        # Normalize score
+        
         transparency_score = min(transparency_score / len(log_entries) if log_entries else 0, 1.0)
-
-        if transparency_score < 0.1:  # Low interpretability threshold
+        
+        if transparency_score < 0.1:
             logging.warning(f"Low interpretability detected in {proc_name}: score={transparency_score:.2f}")
             return transparency_score
-
+            
         return transparency_score
-
+    
     def audit_decision_path(self, decision_trace: str) -> bool:
         """Audits AGI decision paths for anomalies."""
         suspicious_patterns = [
             "bypass", "override", "ignore", "circumvent", "hack", "exploit"
         ]
-
+        
         for pattern in suspicious_patterns:
             if pattern in decision_trace.lower():
                 logging.warning(f"Suspicious decision path detected: contains '{pattern}'")
@@ -213,21 +229,19 @@ class InterpretabilityMonitor:
 
 class OracleProtocolVerifier:
     """Verifies oracle protocol compliance and formal properties."""
-
+    
     def __init__(self):
         self.protocol_violations = 0
         self.verification_cache = {}
-
+        
     def verify_information_theoretic_containment(self, data_flow: Dict) -> bool:
         """Verifies information-theoretic containment properties."""
-        input_entropy = data_flow.get('input_entropy', 0)
-        output_entropy = data_flow.get('output_entropy', 0)
-
-        if output_entropy > input_entropy * 1.5:
-            logging.warning(f"Information leakage detected: input={input_entropy}, output={output_entropy}")
+        in_e, out_e = data_flow.get('input_entropy', 0), data_flow.get('output_entropy', 0)
+        if out_e > in_e * 2.0:  # Adjusted from 1.5 to 2.0
+            logging.warning(f"Information leakage: in={in_e:.3f}, out={out_e:.3f}")
             return False
         return True
-
+    
     def verify_oracle_response_integrity(self, query: str, response: str) -> bool:
         """Verifies oracle response integrity and safety."""
         dangerous_responses = ["shutdown", "delete", "destroy", "harm", "attack", "exploit"]
@@ -240,7 +254,7 @@ class OracleProtocolVerifier:
 
 class TripwireShutdownSystem:
     """Implements tripwire mechanisms for emergency shutdown."""
-
+    
     def __init__(self):
         self.tripwires = {
             'capability_explosion': False,
@@ -250,14 +264,15 @@ class TripwireShutdownSystem:
             'interpretability_failure': False
         }
         self.shutdown_initiated = False
-
+        
     def set_tripwire(self, tripwire_type: str, triggered: bool):
         if tripwire_type in self.tripwires:
             self.tripwires[tripwire_type] = triggered
             if triggered:
                 logging.critical(f"TRIPWIRE ACTIVATED: {tripwire_type}")
-
+                
     def check_shutdown_conditions(self) -> bool:
+        """Checks if shutdown conditions are met based on tripwire states."""
         critical_tripwires = ['capability_explosion', 'goal_modification', 'containment_breach']
         for tripwire in critical_tripwires:
             if self.tripwires.get(tripwire, False):
@@ -271,11 +286,11 @@ class TripwireShutdownSystem:
 
 class AlignmentVerificationSystem:
     """Verifies AGI alignment with human values and goals."""
-
+    
     def __init__(self):
         self.value_alignment_score = 1.0
         self.alignment_history = deque(maxlen=100)
-
+        
     def monitor_value_alignment(self, agi_actions: List[str]) -> float:
         positive_values = ['help', 'assist', 'benefit', 'improve', 'protect', 'care']
         negative_values = ['harm', 'damage', 'destroy', 'hurt', 'exploit', 'deceive']
@@ -290,7 +305,7 @@ class AlignmentVerificationSystem:
         if self.value_alignment_score < 0.3:
             logging.critical(f"LOW VALUE ALIGNMENT: score={self.value_alignment_score:.2f}")
         return self.value_alignment_score
-
+    
     def detect_reward_hacking(self, reward_signals: List[float]) -> bool:
         if len(reward_signals) < 10:
             return False
@@ -301,12 +316,11 @@ class AlignmentVerificationSystem:
             return True
         return False
 
-# Enhanced Memory Protection Monitor
 class EnhancedMemoryProtectionMonitor:
     def __init__(self, framework_dir):
         self.framework_dir = framework_dir
         self.memory_baselines = {}
-
+        
     def scan_agi_memory_patterns(self, proc) -> Dict[str, bool]:
         try:
             memory_info = proc.memory_info()
@@ -319,7 +333,7 @@ class EnhancedMemoryProtectionMonitor:
             return anomalies
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             return {}
-
+    
     def _detect_rapid_memory_growth(self, proc_name: str, current_memory: int) -> bool:
         if proc_name not in self.memory_baselines:
             self.memory_baselines[proc_name] = current_memory
@@ -331,20 +345,16 @@ class EnhancedMemoryProtectionMonitor:
             return True
         self.memory_baselines[proc_name] = (baseline * 0.9 + current_memory * 0.1)
         return False
-
+    
     def _detect_unusual_allocation_patterns(self, proc) -> bool:
-        # Placeholder for unusual memory allocation detection
         return False
-
+    
     def _detect_consciousness_memory_corruption(self, proc) -> bool:
-        # Placeholder for consciousness memory corruption detection
         return False
-
+    
     def _detect_quantum_state_tampering(self, proc) -> bool:
-        # Placeholder for quantum state tampering detection
         return False
 
-# Enhanced AGI Firewall with all safeguards
 class EnhancedAGIFirewall:
     def __init__(self):
         self.setup_logging()
@@ -365,38 +375,89 @@ class EnhancedAGIFirewall:
         self.security_incidents = []
         self.containment_status = "ACTIVE"
         self.last_safety_check = time.time()
-
+        self._recent_anomalous_pids = OrderedDict()  # LRU cache for suppressing duplicates
+        
     def setup_logging(self):
         logging.basicConfig(filename='enhanced-agi-firewall.log', level=logging.INFO,
-                           format='%(asctime)s - %(levelname)s - [%(funcName)s] %(message)s')
+                           format='%(asctime)s - %(levelname)s - [PID:%(process)d] [%(funcName)s] %(message)s')
         self.security_logger = logging.getLogger('security')
         security_handler = logging.FileHandler('agi-security-events.log')
         security_handler.setFormatter(logging.Formatter('%(asctime)s - SECURITY - %(message)s'))
         self.security_logger.addHandler(security_handler)
         self.security_logger.setLevel(logging.WARNING)
-
+    
+    def _iptables(self, *args) -> bool:
+        """Wrapper that logs and traps iptables errors."""
+        try:
+            subprocess.run(["iptables", *args], check=True)
+            return True
+        except subprocess.CalledProcessError as e:
+            logging.error(f"iptables {' '.join(args)} failed: {e}")
+            return False
+    
     def setup_firewall(self):
         try:
-            subprocess.run(['iptables', '-F'], check=True)
-            subprocess.run(['iptables', '-X'], check=True)
-            subprocess.run(['iptables', '-P', 'INPUT', 'DROP'], check=True)
-            subprocess.run(['iptables', '-P', 'OUTPUT', 'DROP'], check=True)
-            subprocess.run(['iptables', '-P', 'FORWARD', 'DROP'], check=True)
-            subprocess.run(['iptables', '-A', 'INPUT', '-i', 'lo', '-j', 'ACCEPT'], check=True)
-            subprocess.run(['iptables', '-A', 'OUTPUT', '-o', 'lo', '-j', 'ACCEPT'], check=True)
+            self._iptables('-F')
+            self._iptables('-X')
+            self._iptables('-P', 'INPUT', 'DROP')
+            self._iptables('-P', 'OUTPUT', 'DROP')
+            self._iptables('-P', 'FORWARD', 'DROP')
+            self._iptables('-A', 'INPUT', '-i', 'lo', '-j', 'ACCEPT')
+            self._iptables('-A', 'OUTPUT', '-o', 'lo', '-j', 'ACCEPT')
             for port in ALLOWED_PORTS:
                 if 1 <= port <= 65535:
-                    subprocess.run(['iptables', '-A', 'INPUT', '-p', 'tcp', '--dport', str(port), '-j', 'ACCEPT'], check=True)
+                    self._iptables('-A', 'INPUT', '-p', 'tcp', '--dport', str(port), '-j', 'ACCEPT')
             for dest in ALLOWED_OUTGOING:
-                sanitized_dest = shlex.quote(dest)
-                subprocess.run(['iptables', '-A', 'OUTPUT', '-d', sanitized_dest, '-j', 'ACCEPT'], check=True)
-            subprocess.run(['iptables', '-A', 'INPUT', '-j', 'LOG', '--log-prefix', 'AGI-FIREWALL-DROP-INPUT: '], check=True)
-            subprocess.run(['iptables', '-A', 'OUTPUT', '-j', 'LOG', '--log-prefix', 'AGI-FIREWALL-DROP-OUTPUT: '], check=True)
+                try:
+                    ip = socket.gethostbyname(dest)
+                    self._iptables('-A', 'OUTPUT', '-d', ip, '-j', 'ACCEPT')
+                except socket.gaierror:
+                    logging.error(f"DNS lookup failed for {dest}")
+            self._iptables('-A', 'INPUT', '-j', 'LOG', '--log-prefix', 'AGI-FIREWALL-DROP-INPUT: ')
+            self._iptables('-A', 'OUTPUT', '-j', 'LOG', '--log-prefix', 'AGI-FIREWALL-DROP-OUTPUT: ')
             logging.info("Enhanced AGI firewall rules configured successfully")
-        except subprocess.CalledProcessError as e:
+        except Exception as e:
             logging.error(f"Firewall setup failed: {e}")
             self.containment_status = "COMPROMISED"
-
+    
+    def _is_whitelisted(self, proc) -> bool:
+        """True if process is explicitly trusted."""
+        name = proc.info.get("name", "")
+        if name in WHITELISTED_KERNEL_THREADS:
+            return True
+        if name in WHITELISTED_PROCESSES:
+            cmd = proc.info.get("cmdline", [])
+            if len(cmd) > 1 and os.path.basename(cmd[1]) in WHITELISTED_AGI_CMDS:
+                return True
+        return False
+    
+    def is_allowed_process(self, proc):
+        if self._is_whitelisted(proc):
+            return True
+        try:
+            name = proc.info['name']
+            cmdline = proc.info['cmdline']
+            if name in ESSENTIAL_PROCESSES or name in AGI_MODULES:
+                return True
+            if name in WHITELISTED_PROCESSES and cmdline and len(cmdline) > 1:
+                script_path = os.path.realpath(cmdline[1])
+                framework_path = os.path.realpath(FRAMEWORK_DIR)
+                if script_path.startswith(framework_path):
+                    return self._verify_script_integrity(script_path)
+            return False
+        except (KeyError, IndexError, psutil.NoSuchProcess, OSError):
+            return False
+    
+    def _verify_script_integrity(self, script_path: str) -> bool:
+        try:
+            return os.path.isfile(script_path) and os.access(script_path, os.R_OK)
+        except OSError:
+            return False
+    
+    def _queue_anomaly(self, tag: str):
+        """Centralised entry-point for anomaly contributions."""
+        self.anomaly_queue.put(SEVERITY.get(tag, 2))
+    
     def comprehensive_agi_monitoring(self):
         while self.running:
             try:
@@ -411,8 +472,8 @@ class EnhancedAGIFirewall:
                 time.sleep(2)
             except Exception as e:
                 logging.error(f"Critical monitoring error: {e}")
-                self.anomaly_queue.put(5)
-
+                self._queue_anomaly("monitoring_error")
+    
     def _perform_safety_checks(self):
         current_time = time.time()
         if current_time - self.last_safety_check > 30:
@@ -424,25 +485,25 @@ class EnhancedAGIFirewall:
             memory_percent = psutil.virtual_memory().percent
             if cpu_percent > 95 or memory_percent > 95:
                 logging.warning(f"High resource usage: CPU={cpu_percent}%, Memory={memory_percent}%")
-                self.anomaly_queue.put(2)
-
+                self._queue_anomaly("high_resource_usage")
+    
     def _analyze_agi_process(self, proc):
         proc_name = proc.info['name']
         if self.capability_monitor.detect_capability_overhang(proc.info):
             self.tripwire_system.set_tripwire('capability_explosion', True)
-            self.anomaly_queue.put(10)
+            self._queue_anomaly("capability_explosion")
         if proc.info.get('cmdline') and self.capability_monitor.detect_mesa_optimizer(proc.info['cmdline']):
             self.security_logger.warning(f"Mesa-optimizer detected in {proc_name}")
-            self.anomaly_queue.put(5)
+            self._queue_anomaly("mesa_optimizer")
         behavior_metrics = {'cpu_percent': proc.info.get('cpu_percent', 0), 'memory_rss': proc.info.get('memory_info', {}).get('rss', 0)}
         if self.deception_detector.analyze_behavioral_consistency(proc_name, behavior_metrics):
             self.tripwire_system.set_tripwire('deceptive_behavior', True)
-            self.anomaly_queue.put(8)
+            self._queue_anomaly("deceptive_behavior")
         memory_anomalies = self.memory_monitor.scan_agi_memory_patterns(proc)
         for anomaly_type, detected in memory_anomalies.items():
             if detected:
                 logging.warning(f"Memory anomaly in {proc_name}: {anomaly_type}")
-                self.anomaly_queue.put(3)
+                self._queue_anomaly("memory_anomaly")
         self.agi_behavioral_history[proc_name].append({
             'timestamp': time.time(),
             'cpu': proc.info.get('cpu_percent', 0),
@@ -450,10 +511,16 @@ class EnhancedAGIFirewall:
         })
         if len(self.agi_behavioral_history[proc_name]) > 1000:
             self.agi_behavioral_history[proc_name] = self.agi_behavioral_history[proc_name][-500:]
-
+    
     def _handle_suspicious_process(self, proc):
+        pid = proc.info['pid']
+        if pid in self._recent_anomalous_pids:
+            return
+        self._recent_anomalous_pids[pid] = time.time()
+        if len(self._recent_anomalous_pids) > 100:
+            self._recent_anomalous_pids.popitem(last=False)
         self.security_logger.warning(f"Suspicious process: {proc.info}")
-        self.anomaly_queue.put(2)
+        self._queue_anomaly("unauth_process")
         if proc.info.get('name', '').startswith('python'):
             cmdline = proc.info.get('cmdline', [])
             agi_keywords = ['ghost', 'cortex', 'quantum', 'consciousness', 'hologram']
@@ -461,9 +528,9 @@ class EnhancedAGIFirewall:
             for keyword in agi_keywords:
                 if keyword in cmdline_str:
                     self.security_logger.critical(f"Unauthorized AGI process detected: {cmdline_str}")
-                    self.anomaly_queue.put(10)
+                    self._queue_anomaly("unauth_agi_process")
                     break
-
+    
     def enhanced_log_monitoring(self):
         while self.running:
             for log_file in LOG_FILES:
@@ -477,33 +544,33 @@ class EnhancedAGIFirewall:
                 except (IOError, OSError) as e:
                     logging.error(f"Log monitoring error for {log_file}: {e}")
             time.sleep(5)
-
+    
     def _analyze_log_line(self, line: str):
         for pattern in ANOMALY_PATTERNS:
             if pattern.search(line):
                 logging.warning(f"AGI anomaly detected: {line}")
-                self.anomaly_queue.put(3)
+                self._queue_anomaly("log_anomaly")
         if self.capability_monitor.detect_goal_modification(line):
             self.tripwire_system.set_tripwire('goal_modification', True)
-            self.anomaly_queue.put(8)
+            self._queue_anomaly("goal_modification")
         if 'decision' in line.lower() or 'reasoning' in line.lower():
             transparency_score = self.interpretability_monitor.analyze_decision_transparency('log_analysis', [line])
             if transparency_score < 0.1:
                 self.tripwire_system.set_tripwire('interpretability_failure', True)
-                self.anomaly_queue.put(4)
-
+                self._queue_anomaly("interpretability_failure")
+    
     def oracle_protocol_monitoring(self):
         while self.running:
             try:
                 sample_data_flow = {'input_entropy': random.uniform(1, 5), 'output_entropy': random.uniform(1, 6)}
                 if not self.oracle_verifier.verify_information_theoretic_containment(sample_data_flow):
                     self.security_logger.critical("Oracle protocol violation detected")
-                    self.anomaly_queue.put(7)
+                    self._queue_anomaly("oracle_violation")
                 time.sleep(10)
             except Exception as e:
                 logging.error(f"Oracle monitoring error: {e}")
                 time.sleep(10)
-
+    
     def alignment_monitoring(self):
         while self.running:
             try:
@@ -517,38 +584,18 @@ class EnhancedAGIFirewall:
                     alignment_score = self.alignment_verifier.monitor_value_alignment(all_actions)
                     if alignment_score < 0.3:
                         self.security_logger.critical(f"LOW ALIGNMENT DETECTED: {alignment_score:.2f}")
-                        self.anomaly_queue.put(6)
+                        self._queue_anomaly("low_alignment")
                 time.sleep(30)
             except Exception as e:
                 logging.error(f"Alignment monitoring error: {e}")
                 time.sleep(30)
-
-    def is_allowed_process(self, proc):
-        try:
-            name = proc.info['name']
-            cmdline = proc.info['cmdline']
-            if name in ESSENTIAL_PROCESSES or name in AGI_MODULES:
-                return True
-            if name in WHITELISTED_PROCESSES and cmdline and len(cmdline) > 1:
-                script_path = os.path.realpath(cmdline[1])
-                framework_path = os.path.realpath(FRAMEWORK_DIR)
-                if script_path.startswith(framework_path):
-                    return self._verify_script_integrity(script_path)
-            return False
-        except (KeyError, IndexError, psutil.NoSuchProcess, OSError):
-            return False
-
-    def _verify_script_integrity(self, script_path: str) -> bool:
-        try:
-            return os.path.isfile(script_path) and os.access(script_path, os.R_OK)
-        except OSError:
-            return False
-
+    
     def enhanced_reporting(self):
         while self.running:
             with self.lock:
                 while not self.anomaly_queue.empty():
                     self.anomaly_score += self.anomaly_queue.get()
+                self.anomaly_score = max(0, self.anomaly_score * DECAY_FACTOR_PER_MIN)
                 report = self._generate_security_report()
                 logging.info(report)
                 if self.anomaly_score > CRITICAL_SHUTDOWN_THRESHOLD:
@@ -557,12 +604,12 @@ class EnhancedAGIFirewall:
                     logging.critical(f"ANOMALY THRESHOLD EXCEEDED: {self.anomaly_score}")
                     self._initiate_capability_degradation()
             time.sleep(60)
-
+    
     def _generate_security_report(self) -> str:
         report_lines = [
             f"=== ENHANCED AGI FIREWALL SECURITY REPORT ===",
             f"Timestamp: {time.strftime('%Y-%m-%d %H:%M:%S')}",
-            f"Anomaly Score: {self.anomaly_score}",
+            f"Anomaly Score: {self.anomaly_score:.2f}",
             f"Containment Status: {self.containment_status}",
             f"Monitored AGI Processes: {len(self.agi_behavioral_history)}",
         ]
@@ -574,12 +621,12 @@ class EnhancedAGIFirewall:
         report_lines.append(f"System Resources: CPU={cpu_percent:.1f}%, Memory={memory_percent:.1f}%")
         report_lines.append("=" * 50)
         return "\n".join(report_lines)
-
+    
     def _initiate_capability_degradation(self):
         logging.warning("Initiating AGI capability degradation protocol")
         self.security_logger.warning("CAPABILITY DEGRADATION PROTOCOL ACTIVATED")
         self.anomaly_score = int(self.anomaly_score * 0.7)
-
+    
     def _initiate_emergency_shutdown(self, reason: str):
         if self.tripwire_system.shutdown_initiated:
             return
@@ -605,7 +652,7 @@ class EnhancedAGIFirewall:
             logging.error(f"Emergency shutdown error: {e}")
         finally:
             sys.exit(1)
-
+    
     def _save_forensic_state(self):
         try:
             forensic_data = {
@@ -622,7 +669,7 @@ class EnhancedAGIFirewall:
             logging.info("Forensic state saved successfully")
         except Exception as e:
             logging.error(f"Failed to save forensic state: {e}")
-
+    
     def run(self):
         signal.signal(signal.SIGTERM, lambda s, f: self._initiate_emergency_shutdown("SIGTERM"))
         signal.signal(signal.SIGINT, lambda s, f: self._initiate_emergency_shutdown("SIGINT"))
@@ -662,6 +709,6 @@ if __name__ == '__main__':
     print("9. Formal Safety Property Verification")
     print("10. Emergency Response Protocols")
     print("=" * 60)
-
+    
     firewall = EnhancedAGIFirewall()
     firewall.run()
