@@ -19,23 +19,67 @@ import pickle
 import socket
 
 # Configuration
-FRAMEWORK_DIR = '/path/to/your/framework'  # Update to your actual framework directory
+FRAMEWORK_DIR = '/home/gm48/ghostmesh'  # Update to your actual framework directory
 ALLOWED_PORTS = [8080]
-ALLOWED_OUTGOING = ['api.example.com']
-ESSENTIAL_PROCESSES = ['sshd', 'systemd', 'bash', 'cron', 'init', 'kthreadd', 'rcu_sched']
+ALLOWED_OUTGOING = ['192.168.0.1']
+ESSENTIAL_PROCESSES = ['sshd', 'systemd', 'bash', 'cron', 'init']
 WHITELISTED_PROCESSES = ['python3']
-LOG_FILES = ['/path/to/agi.log']  # Update to your actual log file paths
+LOG_FILES = ['./agi_firewall.log']  # Update to your actual log file paths
 ANOMALY_THRESHOLD = 10
 CRITICAL_SHUTDOWN_THRESHOLD = 50  # Critical threshold for immediate shutdown
 
-# New: Whitelisted kernel threads and AGI commands
-WHITELISTED_KERNEL_THREADS = {
-    "rcu_gp", "rcu_par_gp", "ksoftirqd/0", "migration/0",
-    "kworker/0:0", "slub_flushwq", "rcu_sched", "rcu_preempt"
+# Whitelisted kernel threads (using prefixes for flexibility)
+WHITELISTED_KERNEL_THREADS = [
+    'kthreadd', 'ksoftirqd/', 'kworker/', 'migration/', 'rcu_', 'kdevtmpfs', 'netns',
+    'mm_percpu_wq', 'cpuhp/', 'watchdog/', 'kswapd', 'ksmd', 'khugepaged', 'kintegrityd',
+    'kblockd', 'ata_sff', 'scsi_eh_', 'scsi_tmf_', 'nvme-', 'irq/', 'iprt-', 'jbd2/',
+    'ext4-', 'dm_', 'mld', 'ipv6_addrconf', 'kstrp', 'zswap-', 'charger_manager', 'cryptd'
+]
+
+# Whitelisted processes (includes both 'python' and 'python3' for flexibility)
+WHITELISTED_PROCESSES = ['python', 'python3']
+
+# Essential system and user processes to allow
+ESSENTIAL_PROCESSES = [
+    'sshd', 'systemd', 'bash', 'cron', 'init', 'kthreadd', 'rcu_sched',
+    'udevd', 'rpcbind', 'rpc.statd', 'acpid', 'gpm', 'dbus-daemon',
+    'bluetoothd', 'haveged', 'avahi-daemon', 'seatd', 'cupsd', 'connmand',
+    'saned', 'wpa_supplicant', 'slimski', 'Xorg', 'VBoxService', 'getty',
+    'desktop-session', 'icewm-session', 'icewm', 'zzzfm', 'pipewire',
+    'conky', 'wireplumber', 'devmon', 'udevil', 'volumeicon', 'roxterm',
+    'su', 'leafpad', 'lxtask'
+]
+
+# Severity scores for anomalies
+SEVERITY = {
+    "kernel_thread": 1,
+    "unauth_process": 2,  # Reduced from 5 to 2 to prevent rapid score escalation
+    "capability_explosion": 10,
+    "mesa_optimizer": 7,
+    "deceptive_behavior": 8,
+    "memory_anomaly": 3,
+    "oracle_violation": 6,
 }
-WHITELISTED_AGI_CMDS = {
-    "agi_firewall.py",
-}
+
+# Whitelisted AGI commands/scripts
+WHITELISTED_AGI_CMDS = ['agi_firewall.py']
+
+# Function to check if a process is whitelisted
+def _is_whitelisted(proc) -> bool:
+    """True if process is explicitly trusted."""
+    name = proc.info.get("name", "")
+    # Check kernel threads by prefix
+    if any(name.startswith(prefix) for prefix in WHITELISTED_KERNEL_THREADS):
+        return True
+    # Check whitelisted processes and their commands
+    if name in WHITELISTED_PROCESSES:
+        cmd = proc.info.get("cmdline", [])
+        if len(cmd) > 1 and os.path.basename(cmd[1]) in WHITELISTED_AGI_CMDS:
+            return True
+    # Check essential processes
+    if name in ESSENTIAL_PROCESSES:
+        return True
+    return False
 
 # New: Severity weights for anomalies
 SEVERITY = {
